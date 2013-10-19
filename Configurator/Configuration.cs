@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Configurator
 {
-	class Configuration : IConfiguration
+	class Configuration : IConfigurationOld
 	{
 		#region Default configuration
 

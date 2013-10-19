@@ -9,7 +9,7 @@ namespace Configurator
 	/// <summary>
 	/// Represents the class storing the parsed key-value pairs from the configuration file.
 	/// </summary>
-	public interface IConfiguration
+	public interface IConfigurationOld
 	{
 		/// <summary>
 		/// This method is automatically called when a key from the configuration file
@@ -75,7 +75,7 @@ namespace Configurator
 		/// <param name="content">Raw configuration file content.</param>
 		/// <param name="configuration">The configuration object, implementing IConfigurable.</param>
 		/// <param name="customParsers">Optional array of parser allowing to parse any type the way you want.</param>
-		public static void AssignConfiguration(string content, IConfiguration configuration, params ICustomParser[] customParsers)
+		public static void AssignConfiguration(string content, IConfigurationOld configuration, params ICustomParser[] customParsers)
 		{
 			Dictionary<string, string> rawConfiguration = ParseConfiguration(content);
 			var configurableProperties =
@@ -168,7 +168,7 @@ namespace Configurator
 		/// quotes: allow to place a '#' inside a value. they do not appear in the final result
 		/// i.e. blah="hello #1!" will create a parameter blah with a value of: hello #1!
 		/// to place a quotation mark inside quotes, double it
-		/// i.e. blah="hello""" will create a parameter blah with a value of: hello "
+		/// i.e. blah="hello""" will create a parameter blah with a value of: hello"
 		/// 
 		/// The keys and values are always trimmed from any white space.
 		/// </remarks>
