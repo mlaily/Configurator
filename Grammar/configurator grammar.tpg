@@ -1,0 +1,50 @@
+// Copyright © Melvyn Laily 2013
+// This grammar describes a pseudo xml notation used in configuration files
+
+<% @TinyPG Namespace="Configurator" OutputPath="../Auto-Generated" %>
+
+// Terminals
+//Note: due to the way the parser accesses the characters, look-behind constructions won't work.
+
+EOF			-> @"^$"; //Matches an empty string. That is, no more characters to read from the current position.
+ENDLINE		-> @"\n\s*|(?=#.*)"; //A single line declaration MUST be followed by a new line or a comment.
+EQUAL			-> @"=(?!\s*\n\s*)"; //A single line declaration cannot contain new lines.
+TAGOPEN		-> @"<(?!/)(?!\s*\n\s*)"; //A tag declaration cannot contain new lines. The (?!/) forbids the parser to try to match <* before checking for a </ ...
+			 // => forces the parser to try to match TagEnd before trying to match a new declaration.
+TAGOPENALT		-> @"</(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
+NSOPEN			-> @"<:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
+NSCLOSE		-> @"</:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
+CONTENTTAGOPEN	-> @"<@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
+CONTENTTAGOPENALT	-> @"</@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
+LISTOPEN		-> @"<\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
+LISTOPENALT		-> @"</\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
+TAGCLOSE		-> @">";
+NAME			-> @"[A-Za-z_][A-Za-z0-9_]*(?!\s*\n\s*)"; //A name cannot be followed by a new line.
+MULTILINECONTENT	-> @"(?s).*?(?=</@)"; //A multi-line content can contain anything except an EXPTAGOPENALT token (used to mark the end of the content).
+SINGLELINECONTENT	-> @"[^""#\s]+[^#\n]*"; // Can't start with a quote, but can contain quotes thereafter.
+QUOTEDCONTENT		-> @"""([^\n""]|"""")*"""; //Quoted string. Can contain # and "" (interpreted as a single quote).
+SINGLELINEITEM	-> @"(?!</\*)[^""#\s]+[^#\n]*"; //Same rule as SINGLELINECONTENT but with (?!</\*) at the beginn ing.
+QUOTEDITEM		-> @"(?!</\*)""([^\n""]|"""")*"""; //Same rule as QUOTEDCONTENT but with (?!</\*) at the beginning.
+
+[Skip]
+WHITESPACE        	-> @"\s+";
+
+[Skip]
+COMMENT		-> @"#.*(?=\n|$)"; //The end of a comment is marked by a new line or the end of the file.
+
+// Production lines LL(1)
+
+Start			-> (Namespace | Declaration)* EOF;
+Namespace		-> NamespaceBegin Declaration* NamespaceEnd;
+Declaration		-> NAME EQUAL (SINGLELINECONTENT | QUOTEDCONTENT) ENDLINE
+				| TagBegin Declaration* TagEnd
+				| ContentTagBegin MULTILINECONTENT ContentTagEnd
+				| ListTagBegin ((SINGLELINEITEM | QUOTEDITEM) ENDLINE)* ListTagEnd;
+NamespaceBegin	-> NSOPEN NAME TAGCLOSE;
+NamespaceEnd		-> NSCLOSE NAME TAGCLOSE;
+TagBegin		-> TAGOPEN NAME TAGCLOSE;
+TagEnd			-> TAGOPENALT NAME TAGCLOSE;
+ContentTagBegin	-> CONTENTTAGOPEN NAME TAGCLOSE;
+ContentTagEnd		-> CONTENTTAGOPENALT NAME TAGCLOSE;
+ListTagBegin		-> LISTOPEN NAME TAGCLOSE;
+ListTagEnd		-> LISTOPENALT NAME TAGCLOSE;
