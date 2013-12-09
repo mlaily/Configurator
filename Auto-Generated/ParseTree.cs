@@ -187,6 +187,18 @@ namespace Configurator
                 case TokenType.Declaration:
                     Value = EvalDeclaration(tree, paramlist);
                     break;
+                case TokenType.SimpleDeclaration:
+                    Value = EvalSimpleDeclaration(tree, paramlist);
+                    break;
+                case TokenType.ComplexDeclaration:
+                    Value = EvalComplexDeclaration(tree, paramlist);
+                    break;
+                case TokenType.MultiLineDeclaration:
+                    Value = EvalMultiLineDeclaration(tree, paramlist);
+                    break;
+                case TokenType.ListDeclaration:
+                    Value = EvalListDeclaration(tree, paramlist);
+                    break;
                 case TokenType.NamespaceBegin:
                     Value = EvalNamespaceBegin(tree, paramlist);
                     break;
@@ -232,6 +244,34 @@ namespace Configurator
         }
 
         protected virtual object EvalDeclaration(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalSimpleDeclaration(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalComplexDeclaration(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalMultiLineDeclaration(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalListDeclaration(ParseTree tree, params object[] paramlist)
         {
             foreach (var node in Nodes)
                 node.Eval(tree, paramlist);

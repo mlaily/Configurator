@@ -125,113 +125,175 @@ namespace Configurator
             switch (tok.Type)
             { // Choice Rule
                 case TokenType.NAME:
-
-                     // Concat Rule
-                    tok = scanner.Scan(TokenType.NAME); // Terminal Rule: NAME
-                    n = node.CreateNode(tok, tok.ToString() );
-                    node.Token.UpdateRange(tok);
-                    node.Nodes.Add(n);
-                    if (tok.Type != TokenType.NAME) {
-                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.NAME.ToString(), 0x1001, tok));
-                        return;
-                    }
-
-                     // Concat Rule
-                    tok = scanner.Scan(TokenType.EQUAL); // Terminal Rule: EQUAL
-                    n = node.CreateNode(tok, tok.ToString() );
-                    node.Token.UpdateRange(tok);
-                    node.Nodes.Add(n);
-                    if (tok.Type != TokenType.EQUAL) {
-                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.EQUAL.ToString(), 0x1001, tok));
-                        return;
-                    }
-
-                     // Concat Rule
-                    tok = scanner.LookAhead(TokenType.SINGLELINECONTENT, TokenType.QUOTEDCONTENT); // Choice Rule
-                    switch (tok.Type)
-                    { // Choice Rule
-                        case TokenType.SINGLELINECONTENT:
-                            tok = scanner.Scan(TokenType.SINGLELINECONTENT); // Terminal Rule: SINGLELINECONTENT
-                            n = node.CreateNode(tok, tok.ToString() );
-                            node.Token.UpdateRange(tok);
-                            node.Nodes.Add(n);
-                            if (tok.Type != TokenType.SINGLELINECONTENT) {
-                                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.SINGLELINECONTENT.ToString(), 0x1001, tok));
-                                return;
-                            }
-                            break;
-                        case TokenType.QUOTEDCONTENT:
-                            tok = scanner.Scan(TokenType.QUOTEDCONTENT); // Terminal Rule: QUOTEDCONTENT
-                            n = node.CreateNode(tok, tok.ToString() );
-                            node.Token.UpdateRange(tok);
-                            node.Nodes.Add(n);
-                            if (tok.Type != TokenType.QUOTEDCONTENT) {
-                                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.QUOTEDCONTENT.ToString(), 0x1001, tok));
-                                return;
-                            }
-                            break;
-                        default:
-                            tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
-                            break;
-                    } // Choice Rule
-
-                     // Concat Rule
-                    tok = scanner.Scan(TokenType.ENDLINE); // Terminal Rule: ENDLINE
-                    n = node.CreateNode(tok, tok.ToString() );
-                    node.Token.UpdateRange(tok);
-                    node.Nodes.Add(n);
-                    if (tok.Type != TokenType.ENDLINE) {
-                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.ENDLINE.ToString(), 0x1001, tok));
-                        return;
-                    }
+                    ParseSimpleDeclaration(node); // NonTerminal Rule: SimpleDeclaration
                     break;
                 case TokenType.TAGOPEN:
-
-                     // Concat Rule
-                    ParseTagBegin(node); // NonTerminal Rule: TagBegin
-
-                     // Concat Rule
-                    tok = scanner.LookAhead(TokenType.NAME, TokenType.TAGOPEN, TokenType.CONTENTTAGOPEN, TokenType.LISTOPEN); // ZeroOrMore Rule
-                    while (tok.Type == TokenType.NAME
-                        || tok.Type == TokenType.TAGOPEN
-                        || tok.Type == TokenType.CONTENTTAGOPEN
-                        || tok.Type == TokenType.LISTOPEN)
-                    {
-                        ParseDeclaration(node); // NonTerminal Rule: Declaration
-                    tok = scanner.LookAhead(TokenType.NAME, TokenType.TAGOPEN, TokenType.CONTENTTAGOPEN, TokenType.LISTOPEN); // ZeroOrMore Rule
-                    }
-
-                     // Concat Rule
-                    ParseTagEnd(node); // NonTerminal Rule: TagEnd
+                    ParseComplexDeclaration(node); // NonTerminal Rule: ComplexDeclaration
                     break;
                 case TokenType.CONTENTTAGOPEN:
+                    ParseMultiLineDeclaration(node); // NonTerminal Rule: MultiLineDeclaration
+                    break;
+                case TokenType.LISTOPEN:
+                    ParseListDeclaration(node); // NonTerminal Rule: ListDeclaration
+                    break;
+                default:
+                    tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
+                    break;
+            } // Choice Rule
 
-                     // Concat Rule
-                    ParseContentTagBegin(node); // NonTerminal Rule: ContentTagBegin
+            parent.Token.UpdateRange(node.Token);
+        } // NonTerminalSymbol: Declaration
 
-                     // Concat Rule
-                    tok = scanner.Scan(TokenType.MULTILINECONTENT); // Terminal Rule: MULTILINECONTENT
+        private void ParseSimpleDeclaration(ParseNode parent) // NonTerminalSymbol: SimpleDeclaration
+        {
+            Token tok;
+            ParseNode n;
+            ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.SimpleDeclaration), "SimpleDeclaration");
+            parent.Nodes.Add(node);
+
+
+             // Concat Rule
+            tok = scanner.Scan(TokenType.NAME); // Terminal Rule: NAME
+            n = node.CreateNode(tok, tok.ToString() );
+            node.Token.UpdateRange(tok);
+            node.Nodes.Add(n);
+            if (tok.Type != TokenType.NAME) {
+                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.NAME.ToString(), 0x1001, tok));
+                return;
+            }
+
+             // Concat Rule
+            tok = scanner.Scan(TokenType.EQUAL); // Terminal Rule: EQUAL
+            n = node.CreateNode(tok, tok.ToString() );
+            node.Token.UpdateRange(tok);
+            node.Nodes.Add(n);
+            if (tok.Type != TokenType.EQUAL) {
+                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.EQUAL.ToString(), 0x1001, tok));
+                return;
+            }
+
+             // Concat Rule
+            tok = scanner.LookAhead(TokenType.SINGLELINECONTENT, TokenType.QUOTEDCONTENT); // Choice Rule
+            switch (tok.Type)
+            { // Choice Rule
+                case TokenType.SINGLELINECONTENT:
+                    tok = scanner.Scan(TokenType.SINGLELINECONTENT); // Terminal Rule: SINGLELINECONTENT
                     n = node.CreateNode(tok, tok.ToString() );
                     node.Token.UpdateRange(tok);
                     node.Nodes.Add(n);
-                    if (tok.Type != TokenType.MULTILINECONTENT) {
-                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.MULTILINECONTENT.ToString(), 0x1001, tok));
+                    if (tok.Type != TokenType.SINGLELINECONTENT) {
+                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.SINGLELINECONTENT.ToString(), 0x1001, tok));
                         return;
                     }
-
-                     // Concat Rule
-                    ParseContentTagEnd(node); // NonTerminal Rule: ContentTagEnd
                     break;
-                case TokenType.LISTOPEN:
+                case TokenType.QUOTEDCONTENT:
+                    tok = scanner.Scan(TokenType.QUOTEDCONTENT); // Terminal Rule: QUOTEDCONTENT
+                    n = node.CreateNode(tok, tok.ToString() );
+                    node.Token.UpdateRange(tok);
+                    node.Nodes.Add(n);
+                    if (tok.Type != TokenType.QUOTEDCONTENT) {
+                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.QUOTEDCONTENT.ToString(), 0x1001, tok));
+                        return;
+                    }
+                    break;
+                default:
+                    tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
+                    break;
+            } // Choice Rule
 
-                     // Concat Rule
-                    ParseListTagBegin(node); // NonTerminal Rule: ListTagBegin
+             // Concat Rule
+            tok = scanner.Scan(TokenType.ENDLINE); // Terminal Rule: ENDLINE
+            n = node.CreateNode(tok, tok.ToString() );
+            node.Token.UpdateRange(tok);
+            node.Nodes.Add(n);
+            if (tok.Type != TokenType.ENDLINE) {
+                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.ENDLINE.ToString(), 0x1001, tok));
+                return;
+            }
 
-                     // Concat Rule
-                    tok = scanner.LookAhead(TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
-                    while (tok.Type == TokenType.SINGLELINEITEM
-                        || tok.Type == TokenType.QUOTEDITEM)
-                    {
+            parent.Token.UpdateRange(node.Token);
+        } // NonTerminalSymbol: SimpleDeclaration
+
+        private void ParseComplexDeclaration(ParseNode parent) // NonTerminalSymbol: ComplexDeclaration
+        {
+            Token tok;
+            ParseNode n;
+            ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.ComplexDeclaration), "ComplexDeclaration");
+            parent.Nodes.Add(node);
+
+
+             // Concat Rule
+            ParseTagBegin(node); // NonTerminal Rule: TagBegin
+
+             // Concat Rule
+            tok = scanner.LookAhead(TokenType.NAME, TokenType.TAGOPEN, TokenType.CONTENTTAGOPEN, TokenType.LISTOPEN); // ZeroOrMore Rule
+            while (tok.Type == TokenType.NAME
+                || tok.Type == TokenType.TAGOPEN
+                || tok.Type == TokenType.CONTENTTAGOPEN
+                || tok.Type == TokenType.LISTOPEN)
+            {
+                ParseDeclaration(node); // NonTerminal Rule: Declaration
+            tok = scanner.LookAhead(TokenType.NAME, TokenType.TAGOPEN, TokenType.CONTENTTAGOPEN, TokenType.LISTOPEN); // ZeroOrMore Rule
+            }
+
+             // Concat Rule
+            ParseTagEnd(node); // NonTerminal Rule: TagEnd
+
+            parent.Token.UpdateRange(node.Token);
+        } // NonTerminalSymbol: ComplexDeclaration
+
+        private void ParseMultiLineDeclaration(ParseNode parent) // NonTerminalSymbol: MultiLineDeclaration
+        {
+            Token tok;
+            ParseNode n;
+            ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.MultiLineDeclaration), "MultiLineDeclaration");
+            parent.Nodes.Add(node);
+
+
+             // Concat Rule
+            ParseContentTagBegin(node); // NonTerminal Rule: ContentTagBegin
+
+             // Concat Rule
+            tok = scanner.Scan(TokenType.MULTILINECONTENT); // Terminal Rule: MULTILINECONTENT
+            n = node.CreateNode(tok, tok.ToString() );
+            node.Token.UpdateRange(tok);
+            node.Nodes.Add(n);
+            if (tok.Type != TokenType.MULTILINECONTENT) {
+                tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.MULTILINECONTENT.ToString(), 0x1001, tok));
+                return;
+            }
+
+             // Concat Rule
+            ParseContentTagEnd(node); // NonTerminal Rule: ContentTagEnd
+
+            parent.Token.UpdateRange(node.Token);
+        } // NonTerminalSymbol: MultiLineDeclaration
+
+        private void ParseListDeclaration(ParseNode parent) // NonTerminalSymbol: ListDeclaration
+        {
+            Token tok;
+            ParseNode n;
+            ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.ListDeclaration), "ListDeclaration");
+            parent.Nodes.Add(node);
+
+
+             // Concat Rule
+            ParseListTagBegin(node); // NonTerminal Rule: ListTagBegin
+
+             // Concat Rule
+            tok = scanner.LookAhead(TokenType.CONTENTTAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
+            while (tok.Type == TokenType.CONTENTTAGOPEN
+                || tok.Type == TokenType.SINGLELINEITEM
+                || tok.Type == TokenType.QUOTEDITEM)
+            {
+                tok = scanner.LookAhead(TokenType.CONTENTTAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // Choice Rule
+                switch (tok.Type)
+                { // Choice Rule
+                    case TokenType.CONTENTTAGOPEN:
+                        ParseMultiLineDeclaration(node); // NonTerminal Rule: MultiLineDeclaration
+                        break;
+                    case TokenType.SINGLELINEITEM:
+                    case TokenType.QUOTEDITEM:
 
                          // Concat Rule
                         tok = scanner.LookAhead(TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // Choice Rule
@@ -271,19 +333,19 @@ namespace Configurator
                             tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.ENDLINE.ToString(), 0x1001, tok));
                             return;
                         }
-                    tok = scanner.LookAhead(TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
-                    }
+                        break;
+                    default:
+                        tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
+                        break;
+                } // Choice Rule
+            tok = scanner.LookAhead(TokenType.CONTENTTAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
+            }
 
-                     // Concat Rule
-                    ParseListTagEnd(node); // NonTerminal Rule: ListTagEnd
-                    break;
-                default:
-                    tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
-                    break;
-            } // Choice Rule
+             // Concat Rule
+            ParseListTagEnd(node); // NonTerminal Rule: ListTagEnd
 
             parent.Token.UpdateRange(node.Token);
-        } // NonTerminalSymbol: Declaration
+        } // NonTerminalSymbol: ListDeclaration
 
         private void ParseNamespaceBegin(ParseNode parent) // NonTerminalSymbol: NamespaceBegin
         {

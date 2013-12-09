@@ -23,8 +23,8 @@ NAME			-> @"[A-Za-z_][A-Za-z0-9_]*(?!\s*\n\s*)"; //A name cannot be followed by 
 MULTILINECONTENT	-> @"(?s).*?(?=</@)"; //A multi-line content can contain anything except an EXPTAGOPENALT token (used to mark the end of the content).
 SINGLELINECONTENT	-> @"[^""#\s]+[^#\n]*"; // Can't start with a quote, but can contain quotes thereafter.
 QUOTEDCONTENT		-> @"""([^\n""]|"""")*"""; //Quoted string. Can contain # and "" (interpreted as a single quote).
-SINGLELINEITEM	-> @"(?!</\*)[^""#\s]+[^#\n]*"; //Same rule as SINGLELINECONTENT but with (?!</\*) at the beginn ing.
-QUOTEDITEM		-> @"(?!</\*)""([^\n""]|"""")*"""; //Same rule as QUOTEDCONTENT but with (?!</\*) at the beginning.
+SINGLELINEITEM	-> @"(?!</\*)(?!<@)[^""#\s]+[^#\n]*"; //Same rule as SINGLELINECONTENT but with (?!</\*)(?!<@) at the beginning.
+QUOTEDITEM		-> @"(?!</\*)(?!<@)""([^\n""]|"""")*"""; //Same rule as QUOTEDCONTENT but with (?!</\*)(?!<@) at the beginning.
 
 [Skip]
 WHITESPACE        	-> @"\s+";
@@ -34,17 +34,18 @@ COMMENT		-> @"#.*(?=\n|$)"; //The end of a comment is marked by a new line or th
 
 // Production lines LL(1)
 
-Start			-> (Namespace | Declaration)* EOF;
-Namespace		-> NamespaceBegin Declaration* NamespaceEnd;
-Declaration		-> NAME EQUAL (SINGLELINECONTENT | QUOTEDCONTENT) ENDLINE
-				| TagBegin Declaration* TagEnd
-				| ContentTagBegin MULTILINECONTENT ContentTagEnd
-				| ListTagBegin ((SINGLELINEITEM | QUOTEDITEM) ENDLINE)* ListTagEnd;
-NamespaceBegin	-> NSOPEN NAME TAGCLOSE;
-NamespaceEnd		-> NSCLOSE NAME TAGCLOSE;
-TagBegin		-> TAGOPEN NAME TAGCLOSE;
-TagEnd			-> TAGOPENALT NAME TAGCLOSE;
-ContentTagBegin	-> CONTENTTAGOPEN NAME TAGCLOSE;
-ContentTagEnd		-> CONTENTTAGOPENALT NAME TAGCLOSE;
-ListTagBegin		-> LISTOPEN NAME TAGCLOSE;
-ListTagEnd		-> LISTOPENALT NAME TAGCLOSE;
+Start				-> (Namespace | Declaration)* EOF;
+Namespace			-> NamespaceBegin Declaration* NamespaceEnd;
+Declaration			-> SimpleDeclaration | ComplexDeclaration | MultiLineDeclaration | ListDeclaration;
+SimpleDeclaration		-> NAME EQUAL (SINGLELINECONTENT | QUOTEDCONTENT) ENDLINE;
+ComplexDeclaration		-> TagBegin Declaration* TagEnd;
+MultiLineDeclaration		-> ContentTagBegin MULTILINECONTENT ContentTagEnd;
+ListDeclaration		-> ListTagBegin (MultiLineDeclaration | (SINGLELINEITEM | QUOTEDITEM) ENDLINE)* ListTagEnd;
+NamespaceBegin		-> NSOPEN NAME TAGCLOSE;
+NamespaceEnd			-> NSCLOSE NAME TAGCLOSE;
+TagBegin			-> TAGOPEN NAME TAGCLOSE;
+TagEnd				-> TAGOPENALT NAME TAGCLOSE;
+ContentTagBegin		-> CONTENTTAGOPEN NAME TAGCLOSE;
+ContentTagEnd			-> CONTENTTAGOPENALT NAME TAGCLOSE;
+ListTagBegin			-> LISTOPEN NAME TAGCLOSE;
+ListTagEnd			-> LISTOPENALT NAME TAGCLOSE;
