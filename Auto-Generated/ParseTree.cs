@@ -196,6 +196,9 @@ namespace Configurator
                 case TokenType.MultiLineDeclaration:
                     Value = EvalMultiLineDeclaration(tree, paramlist);
                     break;
+                case TokenType.MultiLineItem:
+                    Value = EvalMultiLineItem(tree, paramlist);
+                    break;
                 case TokenType.ListDeclaration:
                     Value = EvalListDeclaration(tree, paramlist);
                     break;
@@ -211,11 +214,17 @@ namespace Configurator
                 case TokenType.TagEnd:
                     Value = EvalTagEnd(tree, paramlist);
                     break;
-                case TokenType.ContentTagBegin:
-                    Value = EvalContentTagBegin(tree, paramlist);
+                case TokenType.MultiLineTagBegin:
+                    Value = EvalMultiLineTagBegin(tree, paramlist);
                     break;
-                case TokenType.ContentTagEnd:
-                    Value = EvalContentTagEnd(tree, paramlist);
+                case TokenType.MultiLineTagEnd:
+                    Value = EvalMultiLineTagEnd(tree, paramlist);
+                    break;
+                case TokenType.MultiLineListItemBegin:
+                    Value = EvalMultiLineListItemBegin(tree, paramlist);
+                    break;
+                case TokenType.MultiLineListItemEnd:
+                    Value = EvalMultiLineListItemEnd(tree, paramlist);
                     break;
                 case TokenType.ListTagBegin:
                     Value = EvalListTagBegin(tree, paramlist);
@@ -271,6 +280,13 @@ namespace Configurator
             return null;
         }
 
+        protected virtual object EvalMultiLineItem(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
         protected virtual object EvalListDeclaration(ParseTree tree, params object[] paramlist)
         {
             foreach (var node in Nodes)
@@ -306,14 +322,28 @@ namespace Configurator
             return null;
         }
 
-        protected virtual object EvalContentTagBegin(ParseTree tree, params object[] paramlist)
+        protected virtual object EvalMultiLineTagBegin(ParseTree tree, params object[] paramlist)
         {
             foreach (var node in Nodes)
                 node.Eval(tree, paramlist);
             return null;
         }
 
-        protected virtual object EvalContentTagEnd(ParseTree tree, params object[] paramlist)
+        protected virtual object EvalMultiLineTagEnd(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalMultiLineListItemBegin(ParseTree tree, params object[] paramlist)
+        {
+            foreach (var node in Nodes)
+                node.Eval(tree, paramlist);
+            return null;
+        }
+
+        protected virtual object EvalMultiLineListItemEnd(ParseTree tree, params object[] paramlist)
         {
             foreach (var node in Nodes)
                 node.Eval(tree, paramlist);

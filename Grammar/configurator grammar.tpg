@@ -14,8 +14,8 @@ TAGOPEN		-> @"<(?!/)(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
 TAGOPENALT		-> @"</(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
 NSOPEN			-> @"<:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
 NSCLOSE		-> @"</:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
-CONTENTTAGOPEN	-> @"<@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
-CONTENTTAGOPENALT	-> @"</@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
+MULTILINETAGOPEN	-> @"<@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
+MULTILINETAGOPENALT	-> @"</@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
 LISTOPEN		-> @"<\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
 LISTOPENALT		-> @"</\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
 TAGCLOSE		-> @">";
@@ -39,13 +39,16 @@ Namespace			-> NamespaceBegin Declaration* NamespaceEnd;
 Declaration			-> SimpleDeclaration | ComplexDeclaration | MultiLineDeclaration | ListDeclaration;
 SimpleDeclaration		-> NAME EQUAL (SINGLELINECONTENT | QUOTEDCONTENT) ENDLINE;
 ComplexDeclaration		-> TagBegin Declaration* TagEnd;
-MultiLineDeclaration		-> ContentTagBegin MULTILINECONTENT ContentTagEnd;
-ListDeclaration		-> ListTagBegin (MultiLineDeclaration | (SINGLELINEITEM | QUOTEDITEM) ENDLINE)* ListTagEnd;
+MultiLineDeclaration		-> MultiLineTagBegin MULTILINECONTENT MultiLineTagEnd;
+MultiLineItem			-> MultiLineListItemBegin MULTILINECONTENT  MultiLineListItemEnd;
+ListDeclaration		-> ListTagBegin (MultiLineItem | (SINGLELINEITEM | QUOTEDITEM) ENDLINE)* ListTagEnd;
 NamespaceBegin		-> NSOPEN NAME TAGCLOSE;
 NamespaceEnd			-> NSCLOSE NAME TAGCLOSE;
 TagBegin			-> TAGOPEN NAME TAGCLOSE;
 TagEnd				-> TAGOPENALT NAME TAGCLOSE;
-ContentTagBegin		-> CONTENTTAGOPEN NAME TAGCLOSE;
-ContentTagEnd			-> CONTENTTAGOPENALT NAME TAGCLOSE;
+MultiLineTagBegin		-> MULTILINETAGOPEN NAME TAGCLOSE;
+MultiLineTagEnd		-> MULTILINETAGOPENALT NAME TAGCLOSE;
+MultiLineListItemBegin	-> MULTILINETAGOPEN TAGCLOSE;
+MultiLineListItemEnd		-> MULTILINETAGOPENALT TAGCLOSE;
 ListTagBegin			-> LISTOPEN NAME TAGCLOSE;
 ListTagEnd			-> LISTOPENALT NAME TAGCLOSE;

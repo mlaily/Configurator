@@ -67,12 +67,12 @@ namespace Configurator
             Tokens.Add(TokenType.NSCLOSE);
 
             regex = new Regex(@"<@(?!\s*\n\s*)", RegexOptions.Compiled);
-            Patterns.Add(TokenType.CONTENTTAGOPEN, regex);
-            Tokens.Add(TokenType.CONTENTTAGOPEN);
+            Patterns.Add(TokenType.MULTILINETAGOPEN, regex);
+            Tokens.Add(TokenType.MULTILINETAGOPEN);
 
             regex = new Regex(@"</@(?!\s*\n\s*)", RegexOptions.Compiled);
-            Patterns.Add(TokenType.CONTENTTAGOPENALT, regex);
-            Tokens.Add(TokenType.CONTENTTAGOPENALT);
+            Patterns.Add(TokenType.MULTILINETAGOPENALT, regex);
+            Tokens.Add(TokenType.MULTILINETAGOPENALT);
 
             regex = new Regex(@"<\*(?!\s*\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.LISTOPEN, regex);
@@ -284,37 +284,40 @@ namespace Configurator
             SimpleDeclaration= 5,
             ComplexDeclaration= 6,
             MultiLineDeclaration= 7,
-            ListDeclaration= 8,
-            NamespaceBegin= 9,
-            NamespaceEnd= 10,
-            TagBegin= 11,
-            TagEnd  = 12,
-            ContentTagBegin= 13,
-            ContentTagEnd= 14,
-            ListTagBegin= 15,
-            ListTagEnd= 16,
+            MultiLineItem= 8,
+            ListDeclaration= 9,
+            NamespaceBegin= 10,
+            NamespaceEnd= 11,
+            TagBegin= 12,
+            TagEnd  = 13,
+            MultiLineTagBegin= 14,
+            MultiLineTagEnd= 15,
+            MultiLineListItemBegin= 16,
+            MultiLineListItemEnd= 17,
+            ListTagBegin= 18,
+            ListTagEnd= 19,
 
             //Terminal tokens:
-            EOF     = 17,
-            ENDLINE = 18,
-            EQUAL   = 19,
-            TAGOPEN = 20,
-            TAGOPENALT= 21,
-            NSOPEN  = 22,
-            NSCLOSE = 23,
-            CONTENTTAGOPEN= 24,
-            CONTENTTAGOPENALT= 25,
-            LISTOPEN= 26,
-            LISTOPENALT= 27,
-            TAGCLOSE= 28,
-            NAME    = 29,
-            MULTILINECONTENT= 30,
-            SINGLELINECONTENT= 31,
-            QUOTEDCONTENT= 32,
-            SINGLELINEITEM= 33,
-            QUOTEDITEM= 34,
-            WHITESPACE= 35,
-            COMMENT = 36
+            EOF     = 20,
+            ENDLINE = 21,
+            EQUAL   = 22,
+            TAGOPEN = 23,
+            TAGOPENALT= 24,
+            NSOPEN  = 25,
+            NSCLOSE = 26,
+            MULTILINETAGOPEN= 27,
+            MULTILINETAGOPENALT= 28,
+            LISTOPEN= 29,
+            LISTOPENALT= 30,
+            TAGCLOSE= 31,
+            NAME    = 32,
+            MULTILINECONTENT= 33,
+            SINGLELINECONTENT= 34,
+            QUOTEDCONTENT= 35,
+            SINGLELINEITEM= 36,
+            QUOTEDITEM= 37,
+            WHITESPACE= 38,
+            COMMENT = 39
     }
 
     public class Token
