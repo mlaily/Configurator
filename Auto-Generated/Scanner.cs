@@ -94,7 +94,7 @@ namespace Configurator
             Patterns.Add(TokenType.MULTILINECONTENT, regex);
             Tokens.Add(TokenType.MULTILINECONTENT);
 
-            regex = new Regex(@"[^""#\s]+[^#\n]*", RegexOptions.Compiled);
+            regex = new Regex(@"[^""#\s][^#\n]*", RegexOptions.Compiled);
             Patterns.Add(TokenType.SINGLELINECONTENT, regex);
             Tokens.Add(TokenType.SINGLELINECONTENT);
 
@@ -102,9 +102,9 @@ namespace Configurator
             Patterns.Add(TokenType.QUOTEDCONTENT, regex);
             Tokens.Add(TokenType.QUOTEDCONTENT);
 
-            regex = new Regex(@"(?!</\*)(?!<@)[^""#\s]+[^#\n]*", RegexOptions.Compiled);
-            Patterns.Add(TokenType.SINGLELINEITEM, regex);
-            Tokens.Add(TokenType.SINGLELINEITEM);
+            regex = new Regex(@"(?!</\*)(?!<@)[^\s""#]((?!</\*)[^\s#])*", RegexOptions.Compiled);
+            Patterns.Add(TokenType.SIMPLEITEM, regex);
+            Tokens.Add(TokenType.SIMPLEITEM);
 
             regex = new Regex(@"(?!</\*)(?!<@)""([^\n""]|"""")*""", RegexOptions.Compiled);
             Patterns.Add(TokenType.QUOTEDITEM, regex);
@@ -314,7 +314,7 @@ namespace Configurator
             MULTILINECONTENT= 33,
             SINGLELINECONTENT= 34,
             QUOTEDCONTENT= 35,
-            SINGLELINEITEM= 36,
+            SIMPLEITEM= 36,
             QUOTEDITEM= 37,
             WHITESPACE= 38,
             COMMENT = 39

@@ -308,31 +308,29 @@ namespace Configurator
             ParseListTagBegin(node); // NonTerminal Rule: ListTagBegin
 
              // Concat Rule
-            tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
+            tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SIMPLEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
             while (tok.Type == TokenType.MULTILINETAGOPEN
-                || tok.Type == TokenType.SINGLELINEITEM
+                || tok.Type == TokenType.SIMPLEITEM
                 || tok.Type == TokenType.QUOTEDITEM)
             {
-                tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // Choice Rule
+                tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SIMPLEITEM, TokenType.QUOTEDITEM); // Choice Rule
                 switch (tok.Type)
                 { // Choice Rule
                     case TokenType.MULTILINETAGOPEN:
                         ParseMultiLineItem(node); // NonTerminal Rule: MultiLineItem
                         break;
-                    case TokenType.SINGLELINEITEM:
+                    case TokenType.SIMPLEITEM:
                     case TokenType.QUOTEDITEM:
-
-                         // Concat Rule
-                        tok = scanner.LookAhead(TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // Choice Rule
+                        tok = scanner.LookAhead(TokenType.SIMPLEITEM, TokenType.QUOTEDITEM); // Choice Rule
                         switch (tok.Type)
                         { // Choice Rule
-                            case TokenType.SINGLELINEITEM:
-                                tok = scanner.Scan(TokenType.SINGLELINEITEM); // Terminal Rule: SINGLELINEITEM
+                            case TokenType.SIMPLEITEM:
+                                tok = scanner.Scan(TokenType.SIMPLEITEM); // Terminal Rule: SIMPLEITEM
                                 n = node.CreateNode(tok, tok.ToString() );
                                 node.Token.UpdateRange(tok);
                                 node.Nodes.Add(n);
-                                if (tok.Type != TokenType.SINGLELINEITEM) {
-                                    tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.SINGLELINEITEM.ToString(), 0x1001, tok));
+                                if (tok.Type != TokenType.SIMPLEITEM) {
+                                    tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.SIMPLEITEM.ToString(), 0x1001, tok));
                                     return;
                                 }
                                 break;
@@ -350,22 +348,12 @@ namespace Configurator
                                 tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
                                 break;
                         } // Choice Rule
-
-                         // Concat Rule
-                        tok = scanner.Scan(TokenType.ENDLINE); // Terminal Rule: ENDLINE
-                        n = node.CreateNode(tok, tok.ToString() );
-                        node.Token.UpdateRange(tok);
-                        node.Nodes.Add(n);
-                        if (tok.Type != TokenType.ENDLINE) {
-                            tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.ENDLINE.ToString(), 0x1001, tok));
-                            return;
-                        }
                         break;
                     default:
                         tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found.", 0x0002, tok));
                         break;
                 } // Choice Rule
-            tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SINGLELINEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
+            tok = scanner.LookAhead(TokenType.MULTILINETAGOPEN, TokenType.SIMPLEITEM, TokenType.QUOTEDITEM); // ZeroOrMore Rule
             }
 
              // Concat Rule
