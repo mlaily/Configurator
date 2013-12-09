@@ -43,9 +43,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration.cs" />
-    <Compile Include="ConfigurationParser.cs" />
-    <Compile Include="KeyValueCollection.cs" />
+    <Compile Include="Auto-Generated\Parser.cs" />
+    <Compile Include="Auto-Generated\ParseTree.cs" />
+    <Compile Include="Auto-Generated\Scanner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
