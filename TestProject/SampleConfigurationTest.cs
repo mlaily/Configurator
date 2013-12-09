@@ -29,7 +29,7 @@ hahaha! hohoho!",
             {
                 "first",
                 "second",
-                "cest un peu de la merde",
+                "cest un peu de la merde\nquand meme",
                 "blah",
             },
 			IntCollection = new List<int>() { 1, 2, 3 },
@@ -74,7 +74,7 @@ hahaha! hohoho!",
 					{
 					Name = "biteuh # yo",
 					Count = 2,
-					Collection = new List<bool>() {false,true},
+					Collection = new List<bool>() {false, true},
 					},
 					ComplexTypeCollection = new List<ComplexType>()
 					{
@@ -99,7 +99,7 @@ hahaha! hohoho!",
 					{
 					Name = "biteuh # yo",
 					Count = 2,
-					Collection = new List<bool>() {false,true},
+					Collection = new List<bool>() {false, true},
 					},
 					ComplexTypeCollection = new List<ComplexType>()
 					{
