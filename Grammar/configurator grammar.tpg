@@ -7,25 +7,25 @@
 //Note: due to the way the parser accesses the characters, look-behind constructions won't work.
 
 EOF			-> @"^$"; //Matches an empty string. That is, no more characters to read from the current position.
-ENDLINE		-> @"\n\s*|(?=#.*)"; //A single line declaration MUST be followed by a new line or a comment.
-EQUAL			-> @"=(?!\s*\n\s*)"; //A single line declaration cannot contain new lines.
-TAGOPEN		-> @"<(?!/)(?!\s*\n\s*)"; //A tag declaration cannot contain new lines. The (?!/) forbids the parser to try to match <* before checking for a </ ...
+ENDLINE		-> @"\r?\n\s*|(?=#.*)"; //A single line declaration MUST be followed by a new line or a comment.
+EQUAL			-> @"=(?!\s*\r?\n\s*)"; //A single line declaration cannot contain new lines.
+TAGOPEN		-> @"<(?!/)(?!\s*\r?\n\s*)"; //A tag declaration cannot contain new lines. The (?!/) forbids the parser to try to match <* before checking for a </ ...
 			// => It forces the parser to try to match TagEnd before trying to match a new declaration.
-TAGOPENALT		-> @"</(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
-NSOPEN			-> @"<:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
-NSCLOSE		-> @"</:(?!\s*\n\s*)"; //A namespace declaration cannot contain new lines.
-MULTILINETAGOPEN	-> @"<@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
-MULTILINETAGOPENALT	-> @"</@(?!\s*\n\s*)"; //A tag declaration cannot contain new lines.
-LISTOPEN		-> @"<\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
-LISTOPENALT		-> @"</\*(?!\s*\n\s*)"; //A list declaration cannot contain new lines.
+TAGOPENALT		-> @"</(?!\s*\r?\n\s*)"; //A tag declaration cannot contain new lines.
+NSOPEN			-> @"<:(?!\s*\r?\n\s*)"; //A namespace declaration cannot contain new lines.
+NSCLOSE		-> @"</:(?!\s*\r?\n\s*)"; //A namespace declaration cannot contain new lines.
+MULTILINETAGOPEN	-> @"<@(?!\s*\r?\n\s*)"; //A tag declaration cannot contain new lines.
+MULTILINETAGOPENALT	-> @"</@(?!\s*\r?\n\s*)"; //A tag declaration cannot contain new lines.
+LISTOPEN		-> @"<\*(?!\s*\r?\n\s*)"; //A list declaration cannot contain new lines.
+LISTOPENALT		-> @"</\*(?!\s*\r?\n\s*)"; //A list declaration cannot contain new lines.
 TAGCLOSE		-> @">";
-NAME			-> @"[A-Za-z_][A-Za-z0-9_]*(?!\s*\n\s*)"; //A name cannot be followed by a new line.
+NAME			-> @"[A-Za-z_][A-Za-z0-9_]*(?!\s*\r?\n\s*)"; //A name cannot be followed by a new line.
 MULTILINECONTENT	-> @"(?s).*?(?=</@)"; //A multi-line content can contain anything except an EXPTAGOPENALT token (used to mark the end of the content).
-SINGLELINECONTENT	-> @"[^""#\s][^#\n]*"; // Can't start with a quote, but can contain quotes thereafter.
-QUOTEDCONTENT		-> @"""([^\n""]|"""")*"""; //Quoted string. Can contain # and "" (interpreted as a single quote).
+SINGLELINECONTENT	-> @"[^""#\s][^#\r\n]*"; // Can't start with a quote, but can contain quotes thereafter.
+QUOTEDCONTENT		-> @"""([^\r\n""]|"""")*"""; //Quoted string. Can contain # and "" (interpreted as a single quote).
 SIMPLEITEM		-> @"(?!</\*)(?!<@)[^\s""#]((?!</\*)[^\s#])*"; //Must not start with '</*' or '<@' (but can start with '<'), nor '"' or '#'.
 			// The following chars can be anything but a space, a '#' or '</*'.
-QUOTEDITEM		-> @"(?!</\*)(?!<@)""([^\n""]|"""")*"""; //Same rule as QUOTEDCONTENT but with (?!</\*)(?!<@) at the beginning.
+QUOTEDITEM		-> @"(?!</\*)(?!<@)""([^\r\n""]|"""")*"""; //Same rule as QUOTEDCONTENT but with (?!</\*)(?!<@) at the beginning.
 
 [Skip]
 WHITESPACE        	-> @"\s+";

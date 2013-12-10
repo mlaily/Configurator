@@ -57,6 +57,12 @@
   <ItemGroup>
     <None Include="SampleConfig.conf" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Configurator\Configurator.csproj">
+      <Project>{396544d4-fab8-4095-95fa-b6bf3b2ac073}</Project>
+      <Name>Configurator</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

@@ -42,43 +42,43 @@ namespace Configurator
             Patterns.Add(TokenType.EOF, regex);
             Tokens.Add(TokenType.EOF);
 
-            regex = new Regex(@"\n\s*|(?=#.*)", RegexOptions.Compiled);
+            regex = new Regex(@"\r?\n\s*|(?=#.*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.ENDLINE, regex);
             Tokens.Add(TokenType.ENDLINE);
 
-            regex = new Regex(@"=(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"=(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.EQUAL, regex);
             Tokens.Add(TokenType.EQUAL);
 
-            regex = new Regex(@"<(?!/)(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"<(?!/)(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.TAGOPEN, regex);
             Tokens.Add(TokenType.TAGOPEN);
 
-            regex = new Regex(@"</(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"</(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.TAGOPENALT, regex);
             Tokens.Add(TokenType.TAGOPENALT);
 
-            regex = new Regex(@"<:(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"<:(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.NSOPEN, regex);
             Tokens.Add(TokenType.NSOPEN);
 
-            regex = new Regex(@"</:(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"</:(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.NSCLOSE, regex);
             Tokens.Add(TokenType.NSCLOSE);
 
-            regex = new Regex(@"<@(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"<@(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.MULTILINETAGOPEN, regex);
             Tokens.Add(TokenType.MULTILINETAGOPEN);
 
-            regex = new Regex(@"</@(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"</@(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.MULTILINETAGOPENALT, regex);
             Tokens.Add(TokenType.MULTILINETAGOPENALT);
 
-            regex = new Regex(@"<\*(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"<\*(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.LISTOPEN, regex);
             Tokens.Add(TokenType.LISTOPEN);
 
-            regex = new Regex(@"</\*(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"</\*(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.LISTOPENALT, regex);
             Tokens.Add(TokenType.LISTOPENALT);
 
@@ -86,7 +86,7 @@ namespace Configurator
             Patterns.Add(TokenType.TAGCLOSE, regex);
             Tokens.Add(TokenType.TAGCLOSE);
 
-            regex = new Regex(@"[A-Za-z_][A-Za-z0-9_]*(?!\s*\n\s*)", RegexOptions.Compiled);
+            regex = new Regex(@"[A-Za-z_][A-Za-z0-9_]*(?!\s*\r?\n\s*)", RegexOptions.Compiled);
             Patterns.Add(TokenType.NAME, regex);
             Tokens.Add(TokenType.NAME);
 
@@ -94,11 +94,11 @@ namespace Configurator
             Patterns.Add(TokenType.MULTILINECONTENT, regex);
             Tokens.Add(TokenType.MULTILINECONTENT);
 
-            regex = new Regex(@"[^""#\s][^#\n]*", RegexOptions.Compiled);
+            regex = new Regex(@"[^""#\s][^#\r\n]*", RegexOptions.Compiled);
             Patterns.Add(TokenType.SINGLELINECONTENT, regex);
             Tokens.Add(TokenType.SINGLELINECONTENT);
 
-            regex = new Regex(@"""([^\n""]|"""")*""", RegexOptions.Compiled);
+            regex = new Regex(@"""([^\r\n""]|"""")*""", RegexOptions.Compiled);
             Patterns.Add(TokenType.QUOTEDCONTENT, regex);
             Tokens.Add(TokenType.QUOTEDCONTENT);
 
@@ -106,7 +106,7 @@ namespace Configurator
             Patterns.Add(TokenType.SIMPLEITEM, regex);
             Tokens.Add(TokenType.SIMPLEITEM);
 
-            regex = new Regex(@"(?!</\*)(?!<@)""([^\n""]|"""")*""", RegexOptions.Compiled);
+            regex = new Regex(@"(?!</\*)(?!<@)""([^\r\n""]|"""")*""", RegexOptions.Compiled);
             Patterns.Add(TokenType.QUOTEDITEM, regex);
             Tokens.Add(TokenType.QUOTEDITEM);
 
