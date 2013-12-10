@@ -2,6 +2,7 @@
 // This grammar describes a pseudo xml notation used in configuration files
 
 <% @TinyPG Namespace="Configurator" OutputPath="../Auto-Generated" %>
+<% @Evaluation Generate="False" %>
 
 // Terminals
 //Note: due to the way the parser accesses the characters, look-behind constructions won't work.
