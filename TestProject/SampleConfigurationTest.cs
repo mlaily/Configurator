@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestProject.Expected;
 using System.Collections.Generic;
 using System.Linq;
+using Configurator;
 
 namespace TestProject
 {
@@ -140,6 +141,9 @@ hahaha! hohoho!",
 		{
 			string rawConf = System.IO.File.ReadAllText("SampleConfig.conf");
 			//TODO
+			Scanner scanner = new Scanner();
+			Parser parser = new Parser(scanner);
+			var tree = parser.Parse(rawConf, "filename");
 			actualMain = new MainModel();
 			actualSub = new SubModel();
 		}
