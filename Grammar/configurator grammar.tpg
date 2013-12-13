@@ -1,7 +1,7 @@
 // Copyright © Melvyn Laily 2013
 // This grammar describes a pseudo xml notation used in configuration files
 
-<% @TinyPG Namespace="Configurator" OutputPath="../Auto-Generated" %>
+<% @TinyPG Namespace="Configurator.Parser" OutputPath="../Auto-Generated" %>
 <% @Evaluation Generate="False" %>
 
 // Terminals

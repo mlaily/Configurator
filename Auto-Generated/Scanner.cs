@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 
-namespace Configurator
+namespace Configurator.Parser
 {
 	#region Scanner
 

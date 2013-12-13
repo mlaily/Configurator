@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Configurator
+namespace Configurator.Parser
 {
 	#region Parser
 

@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestProject.Expected;
 using System.Collections.Generic;
 using System.Linq;
-using Configurator;
+using Configurator.Parser;
 
 namespace TestProject
 {
