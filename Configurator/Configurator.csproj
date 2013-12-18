@@ -52,6 +52,7 @@
     <Compile Include="..\Auto-Generated\Scanner.cs">
       <Link>Parser\Scanner.cs</Link>
     </Compile>
+    <Compile Include="Converters.cs" />
     <Compile Include="EvaluationCore.cs" />
     <Compile Include="Configurator.cs" />
     <Compile Include="ParseTree-Util.cs" />
