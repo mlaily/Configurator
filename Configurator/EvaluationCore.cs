@@ -1,5 +1,6 @@
 ﻿using Configurator.Parser;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,6 +11,9 @@ namespace Configurator
 {
 	internal class EvaluationCore
 	{
+		object currentObject = null;
+		PropertyInfo currentProperty = null;
+
 		/// <summary>
 		/// Walk the whole parse tree and assign the configuration.
 		/// </summary>
@@ -27,8 +31,7 @@ namespace Configurator
 		/// <returns>returns true to indicate the children should be skipped</returns>
 		private bool Evaluation(ParseNode node, object mainConf, params object[] subConfs)
 		{
-			object currentObject = mainConf;
-			PropertyInfo currentProperty = null;
+			currentObject = mainConf;
 			switch (node.Token.Type)
 			{
 				case TokenType.Namespace:
@@ -47,14 +50,14 @@ namespace Configurator
 					currentProperty = FindProperty(currentObject, node.FindChild(TokenType.NAME).Text);
 					break;
 				case TokenType.QUOTEDCONTENT:
-					SetProperty(currentProperty, ParseQuotedString(node.Token.Text));
+					SetProperty(currentObject, currentProperty, ParseQuotedString(node.Token.Text));
 					return true;
 				case TokenType.SINGLELINECONTENT:
-					SetProperty(currentProperty, node.Token.Text);
+					SetProperty(currentObject, currentProperty, node.Token.Text);
 					return true;
 				case TokenType.MultiLineDeclaration:
 					currentProperty = FindProperty(currentObject, node);
-					SetProperty(currentProperty, node.FindChild(TokenType.MULTILINECONTENT));
+					SetProperty(currentObject, currentProperty, node.FindChild(TokenType.MULTILINECONTENT));
 					return true;
 				case TokenType.ComplexDeclaration:
 					ChangeCurrentObject(ref currentObject, node);
@@ -63,13 +66,13 @@ namespace Configurator
 					currentProperty = FindProperty(currentObject, node);
 					break;
 				case TokenType.MultiLineItem:
-					SetProperty(currentProperty, node.FindChild(TokenType.MULTILINECONTENT), addToList: true);
+					SetProperty(currentObject, currentProperty, node.FindChild(TokenType.MULTILINECONTENT), addToList: true);
 					return true;
 				case TokenType.SIMPLEITEM:
-					SetProperty(currentProperty, node.Token.Text, addToList: true);
+					SetProperty(currentObject, currentProperty, node.Token.Text, addToList: true);
 					return true;
 				case TokenType.QUOTEDITEM:
-					SetProperty(currentProperty, ParseQuotedString(node.Token.Text), addToList: true);
+					SetProperty(currentObject, currentProperty, ParseQuotedString(node.Token.Text), addToList: true);
 					return true;
 				default:
 					//ignored
@@ -86,13 +89,32 @@ namespace Configurator
 
 		private PropertyInfo FindProperty(object currentObject, string newPropertyName)
 		{
-			throw new NotImplementedException();
-			//todo: look for the new property in the current object and returns it.
+			return (from p in currentObject.GetType().GetProperties()
+					where StringComparer.Ordinal.Equals(p.Name, newPropertyName)
+					select p).Single();
 		}
 
-		private void SetProperty(PropertyInfo currentProperty, object value, bool addToList = false)
+		private void SetProperty(object currentObject, PropertyInfo currentProperty, object value, bool addToList = false)
 		{
-			throw new NotImplementedException();
+			if (addToList)
+			{
+				IList collection = (IList)currentProperty.GetValue(currentObject);
+				if (collection == null)
+				{
+					//even though the property type can be an IEnumerable, an IList or an ICollection,
+					//the auto generated type is a List of the specified type.
+					Type listType = typeof(List<>).MakeGenericType(currentProperty.PropertyType.GenericTypeArguments);
+					collection = (IList)Activator.CreateInstance(listType);
+				}
+				collection.Add(value);
+			}
+			else
+			{
+				if (currentProperty.CanWrite)
+					currentProperty.SetValue(currentObject, value);
+				else
+					throw new EvaluationException(string.Format("Cannot set the value of a read-only property! ({0})", currentProperty.ToString()));
+			}
 		}
 
 		private void ChangeCurrentObject(ref object currentObject, ParseNode node)
@@ -103,16 +125,22 @@ namespace Configurator
 
 		private void ChangeCurrentObject(ref object currentObject, string newPropertyName)
 		{
-			throw new NotImplementedException();
-			//todo: look for the property with the matching name in the current object and returns its value.
-			//(also create a new instance if null ?)
+			var property = (from p in currentObject.GetType().GetProperties()
+							where StringComparer.Ordinal.Equals(p.Name, newPropertyName)
+							select p).Single();
+			object newObject = property.GetValue(currentObject);
+			if (newObject == null)
+			{
+				newObject = Activator.CreateInstance(property.PropertyType);
+			}
+			currentObject = newObject;
 		}
 
 		private object GetNamespace(string newPropertyName, params object[] subConfs)
 		{
-			throw new NotImplementedException();
-			//todo: look for the object with the type matching the given name among the sub configs.
-			//(also create a new instance if null ?)
+			return (from subConf in subConfs
+					where StringComparer.Ordinal.Equals(subConf.GetType().Name, newPropertyName)
+					select subConf).Single();
 		}
 
 		private string GetAndValidateTagsNames(ParseNode openTag, ParseNode closeTag)

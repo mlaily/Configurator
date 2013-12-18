@@ -146,7 +146,7 @@ hahaha! hohoho!",
 			actualMain = new MainModel();
 			actualSub = new SubModel();
 
-			Configurator.Configurator.AssignConfiguration(rawConf, actualMain);
+			Configurator.Configurator.AssignConfiguration(rawConf, actualMain, actualSub);
 
 		}
 
