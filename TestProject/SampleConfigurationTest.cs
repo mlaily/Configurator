@@ -4,6 +4,9 @@ using TestProject.Expected;
 using System.Collections.Generic;
 using System.Linq;
 using Configurator.Parser;
+using System.IO;
+using System.Text;
+using System.Reflection;
 
 namespace TestProject
 {
@@ -23,16 +26,16 @@ bite
 BLah blah blaah!!! #sera inclu.
 parce que ca fait plus de sens de 
 considérer que c'est comme des quotes
-    =>c'est fait pour coller des pavés de texte...
+	=>c'est fait pour coller des pavés de texte...
 hahaha! hohoho!",
 			SimpleBool = true,
 			StringCollection = new List<string>()
-            {
-                "first",
-                "second",
-                "cest un peu de la merde\nquand meme",
-                "blah",
-            },
+			{
+				"first",
+				"second",
+				"cest un peu de la merde\nquand meme",
+				"blah",
+			},
 			IntCollection = new List<int>() { 1, 2, 3 },
 			BoolCollection = new List<bool>() { true, false, true },
 			ComplexTypeItem = new ComplexType()
@@ -140,12 +143,11 @@ hahaha! hohoho!",
 		public void ReadConfig()
 		{
 			string rawConf = System.IO.File.ReadAllText("SampleConfig.conf");
-			//TODO
-			Scanner scanner = new Scanner();
-			Parser parser = new Parser(scanner);
-			var tree = parser.Parse(rawConf, "filename");
 			actualMain = new MainModel();
 			actualSub = new SubModel();
+
+			Configurator.Configurator.AssignConfiguration(rawConf, actualMain);
+
 		}
 
 		[TestMethod]
