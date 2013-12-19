@@ -15,7 +15,7 @@ namespace Configurator
 		{
 			Scanner scanner = new Scanner();
 			Parser.Parser parser = new Parser.Parser(scanner);
-			EvaluationCore evaluator = new EvaluationCore();
+			Evaluation.Core evaluator = new Evaluation.Core();
 			ParseTree tree = parser.Parse(rawConfContent);
 			evaluator.WalkTree(tree, mainConf, subConfs);
 		}

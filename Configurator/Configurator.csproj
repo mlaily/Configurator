@@ -55,6 +55,7 @@
     <Compile Include="Converters.cs" />
     <Compile Include="EvaluationCore.cs" />
     <Compile Include="Configurator.cs" />
+    <Compile Include="EvaluationHelpers.cs" />
     <Compile Include="ParseTree-Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -17,9 +17,6 @@ namespace Configurator
 		/// <summary>
 		/// Actually convert the value to the required type.
 		/// </summary>
-		/// <param name="value"></param>
-		/// <param name="requiredType"></param>
-		/// <returns></returns>
 		public abstract object Convert(string value, Type requiredType);
 	}
 
