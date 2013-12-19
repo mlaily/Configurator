@@ -42,8 +42,8 @@ Declaration			-> SimpleDeclaration | ComplexDeclaration | MultiLineDeclaration |
 SimpleDeclaration		-> NAME EQUAL (SINGLELINECONTENT | QUOTEDCONTENT) ENDLINE;
 ComplexDeclaration		-> TagBegin Declaration* TagEnd;
 MultiLineDeclaration		-> MultiLineTagBegin MULTILINECONTENT MultiLineTagEnd;
-MultiLineItem			-> MultiLineListItemBegin MULTILINECONTENT  MultiLineListItemEnd;
 ListDeclaration		-> ListTagBegin (MultiLineItem | (SIMPLEITEM | QUOTEDITEM) )* ListTagEnd;
+MultiLineItem			-> MultiLineListItemBegin MULTILINECONTENT  MultiLineListItemEnd;
 NamespaceBegin		-> NSOPEN NAME TAGCLOSE;
 NamespaceEnd			-> NSCLOSE NAME TAGCLOSE;
 TagBegin			-> TAGOPEN NAME TAGCLOSE;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Configurator
@@ -65,15 +66,16 @@ namespace Configurator
 					currentProperty = FindProperty(currentObjectStack.Peek(), node.FindChild(TokenType.NAME).Text);
 					break;
 				case TokenType.QUOTEDCONTENT:
-					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty, ParseQuotedString(node.Token.Text));
+					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty, ParseQuotedString(node.Token.Text.Trim()));
 					return true;
 				case TokenType.SINGLELINECONTENT:
-					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty, node.Token.Text);
+					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty, node.Token.Text.Trim());
 					return true;
 				/**************************/
 				case TokenType.MultiLineDeclaration:
 					currentProperty = FindProperty(currentObjectStack.Peek(), node);
-					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty, node.FindChild(TokenType.MULTILINECONTENT).Text);
+					ConvertAndSetProperty(currentObjectStack.Peek(), currentProperty,
+						ParseMultiLinesRawString(node.FindChild(TokenType.MULTILINECONTENT).Text));
 					return true;
 				/**************************/
 				//Complex Declaration
@@ -95,7 +97,7 @@ namespace Configurator
 					{
 						//the name does not match any property...
 						//if the current objet is an enumerable
-						if (typeof(IEnumerable).IsAssignableFrom(currentObjectStack.Peek().GetType()))
+						if (IsEnumerable(currentObjectStack.Peek().GetType()))
 						{
 							// add a new complex item to the current object, and set it as the new current
 							var newObject = GetNewCurrentObject(currentObjectStack.Peek());
@@ -118,13 +120,14 @@ namespace Configurator
 					currentProperty = FindProperty(currentObjectStack.Peek(), node);
 					break;
 				case TokenType.MultiLineItem:
-					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty, node.FindChild(TokenType.MULTILINECONTENT).Text);
+					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty,
+						ParseMultiLinesRawString(node.FindChild(TokenType.MULTILINECONTENT).Text));
 					return true;
 				case TokenType.SIMPLEITEM:
-					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty, node.Token.Text);
+					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty, node.Token.Text.Trim());
 					return true;
 				case TokenType.QUOTEDITEM:
-					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty, ParseQuotedString(node.Token.Text));
+					ConvertAndAddToProperty(currentObjectStack.Peek(), currentProperty, ParseQuotedString(node.Token.Text.Trim()));
 					return true;
 				/**************************/
 				default:
@@ -162,6 +165,11 @@ namespace Configurator
 				result = null;
 				return false;
 			}
+		}
+
+		private bool IsEnumerable(Type type)
+		{
+			return type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
 		}
 
 		private IList GetOrCreateCollection(PropertyInfo currentProperty, object currentObject)
@@ -234,7 +242,7 @@ namespace Configurator
 			object newObject = property.GetValue(currentObject);
 			if (newObject == null)
 			{
-				if (typeof(IEnumerable).IsAssignableFrom(property.PropertyType))
+				if (IsEnumerable(property.PropertyType))
 				{
 					//create a new enumerable
 					newObject = GetOrCreateCollection(property, currentObject);
@@ -242,6 +250,7 @@ namespace Configurator
 				else
 				{
 					newObject = Activator.CreateInstance(property.PropertyType);
+					InitializeProperties(newObject);
 				}
 			}
 			return newObject;
@@ -251,7 +260,7 @@ namespace Configurator
 		{
 			Type targetType = currentObject.GetType().GenericTypeArguments.Single();
 			object newObject;
-			if (typeof(IEnumerable).IsAssignableFrom(targetType))
+			if (IsEnumerable(targetType))
 			{
 				//create a new enumerable
 				newObject = CreateCollection(targetType.GetGenericArguments().Single());
@@ -259,8 +268,35 @@ namespace Configurator
 			else
 			{
 				newObject = Activator.CreateInstance(targetType);
+				InitializeProperties(newObject);
 			}
 			return newObject;
+		}
+
+		private void InitializeProperties(object obj)
+		{
+			var allProperties = from p in obj.GetType().GetProperties()
+								where p.CanRead && p.CanWrite
+								select p;
+			var collections = from p in allProperties
+							  where IsEnumerable(p.PropertyType)
+							  select p;
+			var others = allProperties.Except(collections);
+			foreach (var item in collections)
+			{
+				if (item.GetValue(obj) == null)
+				{
+					item.SetValue(obj, CreateCollection(item.PropertyType.GetGenericArguments().Single()));
+				}
+			}
+			//does not currently work if a type does not have a parameterless ctor
+			//foreach (var item in others)
+			//{
+			//	if (item.GetValue(obj) == null)
+			//	{
+			//		item.SetValue(obj, Activator.CreateInstance(item.PropertyType));
+			//	}
+			//}
 		}
 
 		private object GetNamespace(string newPropertyName, params object[] subConfs)
@@ -288,6 +324,24 @@ namespace Configurator
 		{
 			//remove enclosing quotes, then replace pairs of quotes by just one quote.
 			return content.Substring(1, content.Length - 2).Replace("\"\"", "\"");
+		}
+
+		private string ParseMultiLinesRawString(string content)
+		{
+			//remove first and last new lines if present.
+			if (Regex.IsMatch(content, @"^\s*$"))
+			{
+				return content;
+			}
+			else
+			{
+				var m = Regex.Match(content, @"([\t\x20]*\r?\n)?(?<text>.+?)(\r?\n)?$", RegexOptions.Singleline);
+				if (m.Success)
+					return m.Groups["text"].Value;
+				else
+					return content;
+			}
+
 		}
 	}
 }

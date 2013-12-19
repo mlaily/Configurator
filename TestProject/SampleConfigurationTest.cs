@@ -33,7 +33,7 @@ hahaha! hohoho!",
 			{
 				"first",
 				"second",
-				"cest un peu de la merde\nquand meme",
+				"cest un peu de la merde\r\nquand meme",
 				"blah",
 			},
 			IntCollection = new List<int>() { 1, 2, 3 },

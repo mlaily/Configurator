@@ -288,36 +288,6 @@ namespace Configurator.Parser
 			parent.Token.UpdateRange(node.Token);
 		} // NonTerminalSymbol: MultiLineDeclaration
 
-		private void ParseMultiLineItem(ParseNode parent) // NonTerminalSymbol: MultiLineItem
-		{
-			Token tok;
-#pragma warning disable 0168 //Suppress "The variable 'n' is declared but never used" warning.
-			ParseNode n;
-#pragma warning restore 0168
-			ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.MultiLineItem), "MultiLineItem");
-			parent.Nodes.Add(node);
-
-
-			// Concat Rule
-			ParseMultiLineListItemBegin(node); // NonTerminal Rule: MultiLineListItemBegin
-
-			// Concat Rule
-			tok = scanner.Scan(TokenType.MULTILINECONTENT); // Terminal Rule: MULTILINECONTENT
-			n = node.CreateNode(tok, tok.ToString());
-			node.Token.UpdateRange(tok);
-			node.Nodes.Add(n);
-			if (tok.Type != TokenType.MULTILINECONTENT)
-			{
-				tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.MULTILINECONTENT.ToString(), 0x1001, tok));
-				return;
-			}
-
-			// Concat Rule
-			ParseMultiLineListItemEnd(node); // NonTerminal Rule: MultiLineListItemEnd
-
-			parent.Token.UpdateRange(node.Token);
-		} // NonTerminalSymbol: MultiLineItem
-
 		private void ParseListDeclaration(ParseNode parent) // NonTerminalSymbol: ListDeclaration
 		{
 			Token tok;
@@ -387,6 +357,36 @@ namespace Configurator.Parser
 
 			parent.Token.UpdateRange(node.Token);
 		} // NonTerminalSymbol: ListDeclaration
+
+		private void ParseMultiLineItem(ParseNode parent) // NonTerminalSymbol: MultiLineItem
+		{
+			Token tok;
+#pragma warning disable 0168 //Suppress "The variable 'n' is declared but never used" warning.
+			ParseNode n;
+#pragma warning restore 0168
+			ParseNode node = parent.CreateNode(scanner.GetToken(TokenType.MultiLineItem), "MultiLineItem");
+			parent.Nodes.Add(node);
+
+
+			// Concat Rule
+			ParseMultiLineListItemBegin(node); // NonTerminal Rule: MultiLineListItemBegin
+
+			// Concat Rule
+			tok = scanner.Scan(TokenType.MULTILINECONTENT); // Terminal Rule: MULTILINECONTENT
+			n = node.CreateNode(tok, tok.ToString());
+			node.Token.UpdateRange(tok);
+			node.Nodes.Add(n);
+			if (tok.Type != TokenType.MULTILINECONTENT)
+			{
+				tree.Errors.Add(new ParseError("Unexpected token '" + tok.Text.Replace("\n", "") + "' found. Expected " + TokenType.MULTILINECONTENT.ToString(), 0x1001, tok));
+				return;
+			}
+
+			// Concat Rule
+			ParseMultiLineListItemEnd(node); // NonTerminal Rule: MultiLineListItemEnd
+
+			parent.Token.UpdateRange(node.Token);
+		} // NonTerminalSymbol: MultiLineItem
 
 		private void ParseNamespaceBegin(ParseNode parent) // NonTerminalSymbol: NamespaceBegin
 		{

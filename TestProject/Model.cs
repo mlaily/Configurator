@@ -47,6 +47,13 @@ namespace TestProject.Expected
 			return this.Name == cast.Name && this.Count == cast.Count && this.Collection.SequenceEqual(cast.Collection);
 		}
 
+		public override int GetHashCode()
+		{
+			return (this.Name ?? "").GetHashCode() ^
+				this.Count.GetHashCode() ^
+				(this.Collection == null ? 0 : this.Collection.GetHashCode());
+		}
+
 		public static bool operator ==(ComplexType a, ComplexType b)
 		{
 			// If both are null, or both are same instance, return true.
@@ -83,6 +90,13 @@ namespace TestProject.Expected
 				return false;
 			}
 			return this.Blah == cast.Blah && this.SimpleComplexType == cast.SimpleComplexType && this.ComplexTypeCollection.SequenceEqual(cast.ComplexTypeCollection);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.Blah.GetHashCode() ^
+				(this.SimpleComplexType == null ? 0 : this.SimpleComplexType.GetHashCode()) ^
+				(this.ComplexTypeCollection == null ? 0 : this.ComplexTypeCollection.GetHashCode());
 		}
 
 		public static bool operator ==(ComplexType2 a, ComplexType2 b)
