@@ -70,11 +70,6 @@ namespace Configurator.Evaluation
 			var collection = (IList)GetOrCreateObject(currentObject, currentProperty);
 			collection.Add(convertedValue);
 		}
-		public static void AddToProperty(object currentObject, PropertyInfo currentProperty, object value)
-		{
-			var collection = (IList)GetOrCreateObject(currentObject, currentProperty);
-			collection.Add(value);
-		}
 
 		private static object ConvertValue(string value, Type targetType, IEnumerable<Converter> converters)
 		{
@@ -125,7 +120,7 @@ namespace Configurator.Evaluation
 		/// <summary>
 		/// Create a generic IList for the given type.
 		/// </summary>
-		private static IList CreateCollection(Type ofType)
+		public static IList CreateCollection(Type ofType)
 		{
 			//even though the property type can be an IEnumerable, an IList or an ICollection,
 			//the auto generated type is a List of the specified type.
@@ -182,6 +177,10 @@ namespace Configurator.Evaluation
 			return node.FindChild(validMatches).Text;
 		}
 
+		/// <summary>
+		/// Check whether the NAME tokens of the open and close tags match, and return the name on success.
+		/// Throws an exception otherwise.
+		/// </summary>
 		public static string GetAndValidateTagsNames(ParseNode openTag, ParseNode closeTag)
 		{
 			var openTagName = openTag.FindChild(TokenType.NAME);

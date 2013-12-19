@@ -17,6 +17,9 @@ namespace Configurator.Evaluation
 		object mainConf;
 		object[] subConfs;
 
+		/// <summary>
+		/// Shortcut for currentObjectStack.Peek()
+		/// </summary>
 		private object currentObject { get { return currentObjectStack.Peek(); } }
 
 		public IEnumerable<Converter> Converters { get; protected set; }
@@ -69,7 +72,7 @@ namespace Configurator.Evaluation
 				case TokenType.NamespaceBegin:
 					//switch to the sub config 
 					currentObjectStack.Clear();
-					currentObjectStack.Push(this.GetCorrespondingSubConf(Helpers.GetTextForNode(node, TokenType.NAME)));
+					currentObjectStack.Push(GetCorrespondingSubConf(Helpers.GetTextForNode(node, TokenType.NAME)));
 					return true;
 				case TokenType.NamespaceEnd:
 					//return to main config
@@ -88,10 +91,10 @@ namespace Configurator.Evaluation
 					return true;
 				/**************************/
 				case TokenType.MultiLineDeclaration:
-						currentProperty = Helpers.FindProperty(currentObject, node);
-						string parsedMultiLineString = Helpers.ParseMultiLinesRawString(Helpers.GetTextForNode(node, TokenType.MULTILINECONTENT));
-						Helpers.ConvertAndSetProperty(currentObject, currentProperty, parsedMultiLineString, Converters);
-						return true;
+					currentProperty = Helpers.FindProperty(currentObject, node);
+					string parsedMultiLineString = Helpers.ParseMultiLinesRawString(Helpers.GetTextForNode(node, TokenType.MULTILINECONTENT));
+					Helpers.ConvertAndSetProperty(currentObject, currentProperty, parsedMultiLineString, Converters);
+					return true;
 				/**************************/
 				//Complex Declaration
 				case TokenType.TagBegin:
@@ -131,11 +134,9 @@ namespace Configurator.Evaluation
 					currentProperty = Helpers.FindProperty(currentObject, node);
 					break;
 				case TokenType.MultiLineItem:
-					{
-						string parsedMultiLineItem = Helpers.ParseMultiLinesRawString(Helpers.GetTextForNode(node, TokenType.MULTILINECONTENT));
-						Helpers.ConvertAndAddToProperty(currentObject, currentProperty, parsedMultiLineItem, Converters);
-						return true;
-					}
+					string parsedMultiLineItem = Helpers.ParseMultiLinesRawString(Helpers.GetTextForNode(node, TokenType.MULTILINECONTENT));
+					Helpers.ConvertAndAddToProperty(currentObject, currentProperty, parsedMultiLineItem, Converters);
+					return true;
 				case TokenType.SIMPLEITEM:
 					Helpers.ConvertAndAddToProperty(currentObject, currentProperty, node.Token.Text.Trim(), Converters);
 					return true;

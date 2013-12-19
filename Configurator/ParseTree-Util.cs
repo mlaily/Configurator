@@ -11,9 +11,6 @@ namespace Configurator.Parser
 		/// <summary>
 		/// Look for a token of one of the specified types among the children nodes.
 		/// </summary>
-		/// <param name="nodes"></param>
-		/// <param name="validMatches"></param>
-		/// <returns></returns>
 		public Token FindChild(params TokenType[] validMatches)
 		{
 			foreach (var item in this.Nodes)
