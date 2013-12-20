@@ -22,18 +22,20 @@ namespace Configurator
 
 	public class SimpleTypeConverter : Converter
 	{
-
 		Dictionary<Type, Func<string, object>> ConvertFunctions = new Dictionary<Type, Func<string, object>>()
 		{
+			{ typeof(bool), x => bool.Parse(x) },
+			{ typeof(byte), x => byte.Parse(x) },
 			{ typeof(short), x => short.Parse(x) },
 			{ typeof(int), x => int.Parse(x) },
 			{ typeof(long), x => long.Parse(x) },
-			{ typeof(float), x => float.Parse(x, CultureInfo.InvariantCulture) },
-			{ typeof(double), x => double.Parse(x, CultureInfo.InvariantCulture) },
-			{ typeof(decimal), x => decimal.Parse(x, CultureInfo.InvariantCulture) },
+			//The number style is explicitly set to disallow thousands separator
+			//The decimal separator is a dot
+			{ typeof(float), x => float.Parse(x, NumberStyles.Float, CultureInfo.InvariantCulture) },
+			{ typeof(double), x => double.Parse(x,NumberStyles.Float, CultureInfo.InvariantCulture) },
+			//The decimal type disallows the exponent notation
+			{ typeof(decimal), x => decimal.Parse(x, NumberStyles.Float & ~NumberStyles.AllowExponent, CultureInfo.InvariantCulture) },
 			{ typeof(char), x => char.Parse(x) },
-			{ typeof(bool), x => bool.Parse(x) },
-			{ typeof(byte), x => byte.Parse(x) },
 			//the unsigned integers and the signed byte are not implemented...
 		};
 

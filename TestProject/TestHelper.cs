@@ -19,7 +19,7 @@ namespace TestProject
 			return result;
 		}
 
-		public static void AssertThrowsException<TException>(Action<object> action, object userDefined = null) where TException : Exception
+		public static void AssertThrows<TException>(Action<object> action, object userDefined = null) where TException : Exception
 		{
 			const string specialMarker = "@!SHOULD NOT BE HERE BUT WAS ALL THE SAME!@";
 			bool failWithWrongException = false;
@@ -47,7 +47,7 @@ namespace TestProject
 			}
 			catch (Exception ex)
 			{
-				var y = ex; //supress ex not used warning...
+				var y = ex; //suppress ex not used warning...
 				failWithWrongException = true;
 			}
 			if (failWithWrongException) Assert.Fail("The action threw an exception, but not of the expected type...");
