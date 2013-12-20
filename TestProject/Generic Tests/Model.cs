@@ -4,20 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject.Expected
+namespace TestProject.GenericTests.Expected
 {
-	public class Helper
-	{
-		public static int GetSequenceHashCode<T>(IEnumerable<T> collection)
-		{
-			int result = 0;
-			foreach (var item in collection)
-			{
-				result ^= item == null ? 42 : item.GetHashCode();
-			}
-			return result;
-		}
-	}
 
 	class MainModel
 	{
@@ -64,7 +52,7 @@ namespace TestProject.Expected
 		{
 			return (this.Name ?? "").GetHashCode() ^
 				this.Count.GetHashCode() ^
-				(this.Collection == null ? 0 : Helper.GetSequenceHashCode(this.Collection));
+				(this.Collection == null ? 0 : TestHelper.GetSequenceHashCode(this.Collection));
 		}
 
 		public static bool operator ==(ComplexType a, ComplexType b)
@@ -109,7 +97,7 @@ namespace TestProject.Expected
 		{
 			return this.Blah.GetHashCode() ^
 				(this.SimpleComplexType == null ? 0 : this.SimpleComplexType.GetHashCode()) ^
-				(this.ComplexTypeCollection == null ? 0 : Helper.GetSequenceHashCode(this.ComplexTypeCollection));
+				(this.ComplexTypeCollection == null ? 0 : TestHelper.GetSequenceHashCode(this.ComplexTypeCollection));
 		}
 
 		public static bool operator ==(ComplexType2 a, ComplexType2 b)

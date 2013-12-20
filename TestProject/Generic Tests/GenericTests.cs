@@ -1,17 +1,17 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestProject.Expected;
 using System.Collections.Generic;
 using System.Linq;
 using Configurator.Parser;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using TestProject.GenericTests.Expected;
 
-namespace TestProject
+namespace TestProject.GenericTests
 {
 	[TestClass]
-	public class SampleConfigurationTest
+	public class GenericTests
 	{
 
 		MainModel expectedMain = new MainModel()
@@ -142,18 +142,16 @@ hahaha! hohoho!",
 		[TestInitialize]
 		public void ReadConfig()
 		{
-			string rawConf = System.IO.File.ReadAllText("SampleConfig.conf");
+			string rawConf = System.IO.File.ReadAllText("GenericTestsConfig.conf");
 			actualMain = new MainModel();
 			actualSub = new SubModel();
 
 			Configurator.Configurator.AssignConfiguration(rawConf, actualMain, actualSub);
-
 		}
 
 		[TestMethod]
 		public void SimpleStrings()
 		{
-
 			Assert.AreEqual(expectedMain.SimpleString, actualMain.SimpleString);
 			Assert.AreEqual(expectedMain.SimpleString2, actualMain.SimpleString2);
 			Assert.AreEqual(expectedMain.SimpleString3, actualMain.SimpleString3);
