@@ -4,3 +4,4 @@ syntax: regexp
 /[Bb]in/.*
 /[Oo]bj/.*
 [Pp]ackages/.*
+.*\.coverage$
