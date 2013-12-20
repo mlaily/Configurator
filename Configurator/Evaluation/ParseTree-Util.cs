@@ -36,6 +36,7 @@ namespace Configurator.Parser
 		}
 	}
 
+	[Serializable]
 	public class EvaluationException : Exception
 	{
 		public Token Token { get; protected set; }

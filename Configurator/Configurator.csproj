@@ -52,11 +52,11 @@
     <Compile Include="..\Auto-Generated\Scanner.cs">
       <Link>Parser\Scanner.cs</Link>
     </Compile>
-    <Compile Include="Converters.cs" />
-    <Compile Include="EvaluationCore.cs" />
+    <Compile Include="Evaluation\Converters.cs" />
+    <Compile Include="Evaluation\EvaluationCore.cs" />
     <Compile Include="Configurator.cs" />
-    <Compile Include="EvaluationHelpers.cs" />
-    <Compile Include="ParseTree-Util.cs" />
+    <Compile Include="Evaluation\EvaluationHelpers.cs" />
+    <Compile Include="Evaluation\ParseTree-Util.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
