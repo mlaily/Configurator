@@ -6,6 +6,7 @@ using Configurator.Parser;
 using System.IO;
 using System.Text;
 using System.Reflection;
+using Configurator;
 
 namespace TestProject.SimpleTests
 {
@@ -92,5 +93,74 @@ Char = A
 			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Char = xx", actualModel));
 		}
 
+		[TestMethod]
+		public void CustomConverter()
+		{
+			var actualModel = new ConverterTestsModel();
+			Configurator.Configurator.AssignConfiguration(
+				@"
+			<@FloatMatrix>
+			{  0.3333333, -0.6666667, -0.6666667,  0.0000000,  0.0000000 }
+			{ -0.6666667,  0.3333333, -0.6666667,  0.0000000,  0.0000000 }
+			{ -0.6666667, -0.6666667,  0.3333333,  0.0000000,  0.0000000 }
+			{  0.0000000,  0.0000000,  0.0000000,  1.0000000,  0.0000000 }
+			{  1.0000000,  1.0000000,  1.0000000,  0.0000000,  1.0000000 }
+			</@FloatMatrix>
+			", actualModel, new MatrixConverter());
+			var expected = new float[,] 
+			{{  0.3333333f, -0.6666667f, -0.6666667f,  0.0000000f,  0.0000000f },
+			 { -0.6666667f,  0.3333333f, -0.6666667f,  0.0000000f,  0.0000000f },
+			 { -0.6666667f, -0.6666667f,  0.3333333f,  0.0000000f,  0.0000000f },
+			 {  0.0000000f,  0.0000000f,  0.0000000f,  1.0000000f,  0.0000000f },
+			 {  1.0000000f,  1.0000000f,  1.0000000f,  0.0000000f,  1.0000000f }};
+			CollectionAssert.AreEquivalent(expected, actualModel.FloatMatrix);
+		}
+	}
+
+	class MatrixConverter : Converter
+	{
+		public override bool CanConvert(Type type)
+		{
+			return typeof(float[,]) == type;
+		}
+
+		public override object Convert(string value, Type requiredType)
+		{
+			return StaticParseMatrix(value);
+		}
+
+		//Straight from NegativeScreen...
+		static float[,] StaticParseMatrix(string rawValue)
+		{
+			float[,] matrix = new float[5, 5];
+			var rows = System.Text.RegularExpressions.Regex.Matches(rawValue, @"{(?<row>.*?)}",
+				System.Text.RegularExpressions.RegexOptions.ExplicitCapture);
+			if (rows.Count != 5)
+			{
+				throw new Exception("The matrices must have 5 rows.");
+			}
+			for (int x = 0; x < rows.Count; x++)
+			{
+				var row = rows[x];
+				var columnSplit = row.Groups["row"].Value.Split(',');
+				if (columnSplit.Length != 5)
+				{
+					throw new Exception("The matrices must have 5 columns.");
+				}
+				for (int y = 0; y < matrix.GetLength(1); y++)
+				{
+					float value;
+					if (!float.TryParse(columnSplit[y],
+						System.Globalization.NumberStyles.Float,
+						System.Globalization.NumberFormatInfo.InvariantInfo,
+						out value))
+					{
+						throw new Exception(string.Format("Unable to parse \"{0}\" to a float.", columnSplit[y]));
+					}
+					matrix[x, y] = value;
+				}
+			}
+			return matrix;
+		}
 	}
 }

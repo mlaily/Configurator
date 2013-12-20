@@ -25,6 +25,8 @@ namespace TestProject.SimpleTests
 		public double Double { get; set; }
 		public decimal Decimal { get; set; }
 		public char Char { get; set; }
+
+		public float[,] FloatMatrix { get; set; }
 	}
 
 }
