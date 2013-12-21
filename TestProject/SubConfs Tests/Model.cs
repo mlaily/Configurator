@@ -20,7 +20,15 @@ namespace TestProject.SubConfTests
 		public string SimpleString { get; set; }
 	}
 
-	class SubConf1
+	interface ISubConf
+	{
+		int SimpleInt { get; set; }
+		int ExtendedInt { get; set; }
+		IEnumerable<float> FloatCollection { get; set; }
+		Complex Complex { get; set; }
+	}
+
+	class SubConf1 : ISubConf
 	{
 		public int SimpleInt { get; set; }
 		public int ExtendedInt { get; set; }
@@ -28,7 +36,7 @@ namespace TestProject.SubConfTests
 		public Complex Complex { get; set; }
 	}
 
-	class SubConf2
+	class SubConf2 : ISubConf
 	{
 		public int SimpleInt { get; set; }
 		public int ExtendedInt { get; set; }
@@ -36,7 +44,7 @@ namespace TestProject.SubConfTests
 		public Complex Complex { get; set; }
 	}
 
-	class SubConf3
+	class SubConf3 : ISubConf
 	{
 		public int SimpleInt { get; set; }
 		public int ExtendedInt { get; set; }

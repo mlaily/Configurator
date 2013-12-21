@@ -43,20 +43,36 @@ namespace TestProject.SubConfTests
 		};
 
 		MainModel actualMain;
-		SubConf1 actualSubConf1;
-		SubConf2 actualSubConf2;
-		SubConf3 actualSubConf3;
+
+		SubConf1 actualSubConf1_1;
+		SubConf2 actualSubConf2_1;
+		SubConf3 actualSubConf3_1;
+
+		SubConf1 actualSubConf1_2;
+		SubConf2 actualSubConf2_2;
+		SubConf3 actualSubConf3_2;
+
 
 		[TestInitialize]
 		public void ReadConfig()
 		{
-			string rawConf = System.IO.File.ReadAllText("SubConfsTestsConfig.conf");
+			string rawConf = System.IO.File.ReadAllText("SubConfsTestsConfig_1.conf");
 			actualMain = new MainModel();
-			actualSubConf1 = new SubConf1();
-			actualSubConf2 = new SubConf2();
-			actualSubConf3 = new SubConf3();
+			actualSubConf1_1 = new SubConf1();
+			actualSubConf2_1 = new SubConf2();
+			actualSubConf3_1 = new SubConf3();
 
-			Configurator.Configurator.AssignConfiguration(rawConf, actualMain, actualSubConf1, actualSubConf2, actualSubConf3);
+			Configurator.Configurator.AssignConfiguration(rawConf, actualMain, actualSubConf1_1, actualSubConf2_1, actualSubConf3_1);
+
+
+			//same config file, but with the sub confs in multiple parts
+			rawConf = System.IO.File.ReadAllText("SubConfsTestsConfig_2.conf");
+			actualMain = new MainModel();
+			actualSubConf1_2 = new SubConf1();
+			actualSubConf2_2 = new SubConf2();
+			actualSubConf3_2 = new SubConf3();
+
+			Configurator.Configurator.AssignConfiguration(rawConf, actualMain, actualSubConf1_2, actualSubConf2_2, actualSubConf3_2);
 		}
 
 		[TestMethod]
@@ -69,30 +85,47 @@ namespace TestProject.SubConfTests
 		}
 
 		[TestMethod]
-		public void TestSubConf1()
+		public void TestSubConf1_1()
 		{
-			CollectionAssert.AreEquivalent(expectedSubConf1.FloatCollection.ToList(), actualSubConf1.FloatCollection.ToList());
-			Assert.AreEqual(expectedSubConf1.Complex.SimpleString, actualSubConf1.Complex.SimpleString);
-			Assert.AreEqual(expectedSubConf1.ExtendedInt, actualSubConf1.ExtendedInt);
-			Assert.AreEqual(expectedSubConf1.SimpleInt, actualSubConf1.SimpleInt);
+			TestSubConf(expectedSubConf1, actualSubConf1_1);
 		}
 
 		[TestMethod]
-		public void TestSubConf2()
+		public void TestSubConf2_1()
 		{
-			CollectionAssert.AreEquivalent(expectedSubConf2.FloatCollection.ToList(), actualSubConf2.FloatCollection.ToList());
-			Assert.AreEqual(expectedSubConf2.Complex.SimpleString, actualSubConf2.Complex.SimpleString);
-			Assert.AreEqual(expectedSubConf2.ExtendedInt, actualSubConf2.ExtendedInt);
-			Assert.AreEqual(expectedSubConf2.SimpleInt, actualSubConf2.SimpleInt);
+			TestSubConf(expectedSubConf2, actualSubConf2_1);
 		}
 
 		[TestMethod]
-		public void TestSubConf3()
+		public void TestSubConf3_1()
 		{
-			CollectionAssert.AreEquivalent(expectedSubConf3.FloatCollection.ToList(), actualSubConf3.FloatCollection.ToList());
-			Assert.AreEqual(expectedSubConf3.Complex.SimpleString, actualSubConf3.Complex.SimpleString);
-			Assert.AreEqual(expectedSubConf3.ExtendedInt, actualSubConf3.ExtendedInt);
-			Assert.AreEqual(expectedSubConf3.SimpleInt, actualSubConf3.SimpleInt);
+			TestSubConf(expectedSubConf3, actualSubConf3_1);
+		}
+
+		[TestMethod]
+		public void TestSubConf1_2()
+		{
+			TestSubConf(expectedSubConf1, actualSubConf1_2);
+		}
+
+		[TestMethod]
+		public void TestSubConf2_2()
+		{
+			TestSubConf(expectedSubConf2, actualSubConf2_2);
+		}
+
+		[TestMethod]
+		public void TestSubConf3_2()
+		{
+			TestSubConf(expectedSubConf3, actualSubConf3_2);
+		}
+
+		private static void TestSubConf(ISubConf expectedSubConf, ISubConf actualSubConf)
+		{
+			CollectionAssert.AreEquivalent(expectedSubConf.FloatCollection.ToList(), actualSubConf.FloatCollection.ToList());
+			Assert.AreEqual(expectedSubConf.Complex.SimpleString, actualSubConf.Complex.SimpleString);
+			Assert.AreEqual(expectedSubConf.ExtendedInt, actualSubConf.ExtendedInt);
+			Assert.AreEqual(expectedSubConf.SimpleInt, actualSubConf.SimpleInt);
 		}
 	}
 }
