@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using Configurator;
+using Configurator.Evaluation;
 
 namespace TestProject.SimpleTests
 {
@@ -68,29 +69,29 @@ Char = A
 			Assert.AreEqual('A', actualModel.Char);
 			//
 			actualModel = new ConverterTestsModel();
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Bool = 1", actualModel));
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Bool = 0", actualModel));
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Bool = trrrue", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Bool = 1", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Bool = 0", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Bool = trrrue", actualModel));
 
-			TestHelper.AssertThrows<OverflowException>(_ => Configurator.Configurator.AssignConfiguration("Byte = -1", actualModel));
-			TestHelper.AssertThrows<OverflowException>(_ => Configurator.Configurator.AssignConfiguration("Byte = 256", actualModel));
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Byte = FF", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Byte = -1", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Byte = 256", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Byte = FF", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Short = FF", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Short = FF", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Int = FF", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Int = FF", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Long = FF", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Long = FF", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Float = 42,50", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Float = 42,50", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Double = 42,24", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Double = 42,24", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Decimal = 42,24", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Decimal = 42,24", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Char = \"\" #empty", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Char = \"\" #empty", actualModel));
 
-			TestHelper.AssertThrows<FormatException>(_ => Configurator.Configurator.AssignConfiguration("Char = xx", actualModel));
+			TestHelper.AssertThrows<EvaluationException>(_ => Configurator.Configurator.AssignConfiguration("Char = xx", actualModel));
 		}
 
 		[TestMethod]

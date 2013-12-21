@@ -50,6 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="SubConfs Tests\SubConfTests.cs" />
+    <Compile Include="SubConfs Tests\Model.cs" />
     <Compile Include="Simple Tests\ConverterTests.cs" />
     <Compile Include="Simple Tests\SimpleTests.cs" />
     <Compile Include="Simple Tests\Model.cs" />
@@ -61,6 +63,7 @@
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="SubConfs Tests\SubConfsTestsConfig.conf" />
     <None Include="Generic Tests 2\GenericTests2Config.conf" />
     <None Include="Generic Tests\GenericTestsConfig.conf" />
   </ItemGroup>
@@ -92,7 +95,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>XCOPY "$(ProjectDir)Generic Tests\GenericTestsConfig.conf" "$(TargetDir)" /Y
-XCOPY "$(ProjectDir)Generic Tests 2\GenericTests2Config.conf" "$(TargetDir)" /Y</PreBuildEvent>
+XCOPY "$(ProjectDir)Generic Tests 2\GenericTests2Config.conf" "$(TargetDir)" /Y
+XCOPY "$(ProjectDir)SubConfs Tests\SubConfsTestsConfig.conf" "$(TargetDir)" /Y</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

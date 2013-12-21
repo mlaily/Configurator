@@ -31,7 +31,8 @@ namespace Configurator.Evaluation
 			PropertyInfo propertyInfo;
 			if (TryFindProperty(obj, newPropertyName, out propertyInfo))
 				return propertyInfo;
-			else throw new EvaluationException("The specified property name does not match any property in the given object!");
+			else throw new EvaluationException(
+				string.Format("The specified property name \"{0}\" does not match any property in the provided object!", newPropertyName));
 		}
 
 		public static bool TryFindProperty(object obj, string newPropertyName, out PropertyInfo result)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Configurator.Evaluation;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -46,7 +47,16 @@ namespace Configurator
 
 		public override object Convert(string value, Type requiredType)
 		{
-			return ConvertFunctions[requiredType](value);
+			try
+			{
+				return ConvertFunctions[requiredType](value);
+			}
+			catch (Exception ex)
+			{
+				throw new EvaluationException(
+					string.Format("An exception was thrown trying to convert the value \"{0}\" to a {1}", value, requiredType.FullName), null, ex);
+			}
+
 		}
 	}
 
