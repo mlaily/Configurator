@@ -1,7 +1,0 @@
-
-syntax: regexp
-.*\.(suo|SUO)$
-/[Bb]in/.*
-/[Oo]bj/.*
-[Pp]ackages/.*
-.*\.coverage$
